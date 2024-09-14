@@ -3,6 +3,9 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import 'dotenv/config';
 
+// middleware Hokies
+import { ErrorMiddleware } from './middleware/error';
+
 export const app = express();
 
 // body parser
@@ -26,14 +29,13 @@ app.get('/test', (req: Request, res: Response, next: NextFunction) => {
 
 // all api
 app.all('*', (req: Request, res: Response, next: NextFunction) => {
-    // const err = new Error(`Route ${req.originalUrl} not found`) as any;`
-    // err.statusCode = 404;
-    // next(err);
-    res.status(404).json({ 
-        success: false,
-        message: `Route ${req.originalUrl} not found`
-    });
+    const err = new Error(`Route ${req.originalUrl} not found`) as any;
+    err.statusCode = 404;
+    next(err);
 });
+
+// middleware
+app.use(ErrorMiddleware);
 
 // create server
 app.listen(process.env.PORT, () => {
