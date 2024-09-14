@@ -3,8 +3,8 @@ import ErrorHandler from "../utils/ErrorHandler";
 
 export const ErrorMiddleware = (err:any, req: Request, res: Response, next: NextFunction) => {
 
-    err.message = err.message || 'Internal Server Error'
     err.statusCode = err.statusCode || 500;
+    err.message = err.message || 'Internal Server Error'
 
     // wrong mongodb id error
     if (err.name === 'CastError') {
@@ -29,8 +29,6 @@ export const ErrorMiddleware = (err:any, req: Request, res: Response, next: Next
         const message = `Json web token is expired, try again`;
         err = new ErrorHandler(message, 400);
     }
-
-    // res.json(err)
 
     res.status(err.statusCode).json({
         success: false,

@@ -1,10 +1,13 @@
 import express, { NextFunction, Request, Response } from 'express';
 import cookieParser from 'cookie-parser';
+import connectDB from './utils/db';
 import cors from 'cors';
 import 'dotenv/config';
 
+
 // middleware Hokies
 import { ErrorMiddleware } from './middleware/error';
+
 
 export const app = express();
 
@@ -40,4 +43,5 @@ app.use(ErrorMiddleware);
 // create server
 app.listen(process.env.PORT, () => {
     console.log(`Server is connected with port ${process.env.PORT}`);
+    connectDB();
 });
