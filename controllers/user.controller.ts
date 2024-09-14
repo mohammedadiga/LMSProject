@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import CatchAsyncError from "../middleware/catchAsyncError";
 import ErrorHandler from "../utils/ErrorHandler";
 import userModel, { IUser } from "../models/user.model";
-import { createActivationToken } from "../utils/jwt";
+import { createActivationToken, sendToken } from "../utils/jwt";
 import sendMail from "../utils/sendMail";
 import jwt from "jsonwebtoken";
 import ejs from "ejs";
@@ -72,10 +72,9 @@ export const activateUser = CatchAsyncError(async (req: Request, res: Response, 
 
         res.status(200).json({ success: true });
 
-    } catch (error: any) { return next(new ErrorHandler(error.message, 400))}
+    } catch (error: any) { return next(new ErrorHandler(error.message, 500))}
 
 });
-
 
 // Login user
 export const loginUser = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
@@ -90,9 +89,9 @@ export const loginUser = CatchAsyncError(async (req: Request, res: Response, nex
 
         const isPasswordMetch = await user.comparePassword(password);
         if (!isPasswordMetch) return next(new ErrorHandler("Invalid email or password", 400));
-
-        res.status(201).json({ success: true, user });
         
-    } catch (error: any) { return next(new ErrorHandler(error.message, 400)) }
+        sendToken(user, 200, res)
+        
+    } catch (error: any) { return next(new ErrorHandler(error.message, 500)) }
 
 });

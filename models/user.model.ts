@@ -1,5 +1,6 @@
 import mongoose, {Document, Model, Schema} from "mongoose";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 
 const emailRegexPattern: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -67,6 +68,17 @@ userSchema.pre<IUser>('save', async function (next) {
 userSchema.methods.comparePassword = async function(enteredPassword: string): Promise<boolean> {
     return await bcrypt.compare(enteredPassword, this.password);
 }
+
+// sign access token
+userSchema.methods.SignAccessToken = function () {
+    return jwt.sign({id: this._id}, process.env.ACCESS_TOKEN || '', {expiresIn: "5m"});
+};
+
+// sign refresh token
+userSchema.methods.SignRefreshToken = function () {
+    return jwt.sign({id: this._id}, process.env.REFRESH_TOKEN || '', {expiresIn: "3d"});
+};
+
 
 const userModel: Model<IUser> = mongoose.model<IUser>("User", userSchema);
 export default userModel;
