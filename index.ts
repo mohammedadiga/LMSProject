@@ -8,6 +8,9 @@ import 'dotenv/config';
 // middleware Hokies
 import { ErrorMiddleware } from './middleware/error';
 
+// routes
+import userRouter from './routes/user.route';
+
 
 export const app = express();
 
@@ -21,6 +24,9 @@ app.use(cookieParser());
 app.use(cors({
     origin: process.env.ORIGIN
 }));
+
+// route
+app.use("/api/v1", userRouter);
 
 // testing api
 app.get('/test', (req: Request, res: Response, next: NextFunction) => {
