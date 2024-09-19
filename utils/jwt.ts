@@ -2,6 +2,7 @@ import { Response } from "express";
 import jwt, { Secret } from "jsonwebtoken";
 import { IUser } from "../models/user.model";
 import 'dotenv/config';
+import { redis } from "./redis";
 
 // Create Email activate Token
 interface IActivationToken{
@@ -51,8 +52,8 @@ export const sendToken = ( user: IUser, statusCode: number, res: Response ) => {
     const accessToken = user.SignAccessToken();
     const refreshToken = user.SignRefreshToken();
 
-    // // upload session to redis
-    // redis.set(user._id, JSON.stringify(user) as any);
+    // upload session to redis
+    redis.set(user.id, JSON.stringify(user) as any);
     
     // Only set secure to true in production
     if(process.env.NODE_ENV === 'production') accessTokenOptions.secure = true;

@@ -8,4 +8,7 @@ userRouter.post('/register', registerationUser)
 userRouter.post('/activate-user', activateUser)
 userRouter.post('/login', loginUser)
 
+// userRouter.get('/refreshtoken', updateAccessToken)
+// userRouter.get('/logout', logoutUser)
+
 export default userRouter;

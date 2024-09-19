@@ -2,9 +2,9 @@ import { NextFunction, Request, Response } from "express";
 import CatchAsyncError from "../middleware/catchAsyncError";
 import ErrorHandler from "../utils/ErrorHandler";
 import userModel, { IUser } from "../models/user.model";
-import { createActivationToken, sendToken } from "../utils/jwt";
+import { accessTokenOptions, createActivationToken, refreshTokenOptions, sendToken } from "../utils/jwt";
 import sendMail from "../utils/sendMail";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import ejs from "ejs";
 import path from "path";
 
@@ -89,9 +89,10 @@ export const loginUser = CatchAsyncError(async (req: Request, res: Response, nex
 
         const isPasswordMetch = await user.comparePassword(password);
         if (!isPasswordMetch) return next(new ErrorHandler("Invalid email or password", 400));
-        
+
         sendToken(user, 200, res)
         
     } catch (error: any) { return next(new ErrorHandler(error.message, 500)) }
 
 });
+

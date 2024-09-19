@@ -25,9 +25,6 @@ app.use(cors({
     origin: process.env.ORIGIN
 }));
 
-// route
-app.use("/api/v1", userRouter);
-
 // testing api
 app.get('/test', (req: Request, res: Response, next: NextFunction) => {
     res.status(200).json({ 
@@ -35,6 +32,9 @@ app.get('/test', (req: Request, res: Response, next: NextFunction) => {
         message: 'API is working fine!'
     });
 });
+
+// route
+app.use("/api/v1", userRouter);
 
 // all api
 app.all('*', (req: Request, res: Response, next: NextFunction) => {
