@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express';
 import cookieParser from 'cookie-parser';
+import {v2 as cloudinary} from "cloudinary";
 import connectDB from './utils/db';
 import cors from 'cors';
 import 'dotenv/config';
@@ -45,6 +46,14 @@ app.all('*', (req: Request, res: Response, next: NextFunction) => {
 
 // middleware
 app.use(ErrorMiddleware);
+
+// cloudinary config
+cloudinary.config({
+    cloud_name: process.env.ClOUD_NAME,
+    api_key: process.env.CLOUD_API_KEY,
+    api_secret: process.env.CLOUD_API_SECRET,
+})
+
 
 // create server
 app.listen(process.env.PORT, () => {
