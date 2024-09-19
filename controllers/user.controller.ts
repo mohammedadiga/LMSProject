@@ -127,3 +127,13 @@ export const logoutUser = CatchAsyncError(async (req: Request, res: Response, ne
         
     } catch (error: any) { return next(new ErrorHandler(error.message,500)); }
 });
+
+// get user info
+export const getUserInfo = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) =>{
+    try {
+
+        const user = req.user
+        res.status(201).json({ success: true, user });
+
+    } catch (error: any) { return next(new ErrorHandler(error.message,500)); }
+});
