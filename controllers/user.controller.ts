@@ -5,8 +5,10 @@ import userModel, { IUser } from "../models/user.model";
 import { accessTokenOptions, createActivationToken, refreshTokenOptions, sendToken } from "../utils/jwt";
 import sendMail from "../utils/sendMail";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { redis } from "../utils/redis";
 import ejs from "ejs";
 import path from "path";
+
 
 
 // register user
@@ -96,3 +98,32 @@ export const loginUser = CatchAsyncError(async (req: Request, res: Response, nex
 
 });
 
+// update access token
+export const updateAccessToken = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+
+        const accessToken = jwt.sign({id: req.user?._id}, process.env.ACCESS_TOKEN as string, {expiresIn: "5m"});
+        const refreshToken = jwt.sign({id: req.user?._id}, process.env.REFRESH_TOKEN as string, {expiresIn: "3d"});
+
+        res.cookie("access_token", accessToken, accessTokenOptions);
+        res.cookie("refresh_token", refreshToken, refreshTokenOptions);
+
+        res.status(200).json({ success: true, accessToken})
+
+    } catch (error: any) { return next(new ErrorHandler(error.message,500)); }
+});
+
+// logout user
+export const logoutUser = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) =>{
+    try {
+
+        res.cookie("access_token", "", {maxAge: 1});
+        res.cookie("refresh_token", "", {maxAge: 1});
+
+        const userId = req.user?._id as any|| "";
+        redis.del(userId);
+
+        res.status(200).json({success: true, message: "Logged out successfully"})   
+        
+    } catch (error: any) { return next(new ErrorHandler(error.message,500)); }
+});
